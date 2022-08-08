@@ -7,6 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors());
 
 const db = mysql.createPool({
     host: 'mysql_db',
@@ -14,6 +15,8 @@ const db = mysql.createPool({
     password: 'MYSQL_PASSWORD',
     database: 'meds'
 });
+
+
 
 
 app.get('/', (req, res) => {
