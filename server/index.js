@@ -33,9 +33,10 @@ app.get("/get/", (req, res) => {
 
 app.get("/get/:patientId", (req, res) => {
   const patientId = req.params.patientId;
-  const SelectQuery = " SELECT * FROM patients WHERE patientId = ?";
+  const SelectQuery = " SELECT * FROM patients WHERE id = ?";
   db.query(SelectQuery, patientId, (err, results) => {
     res.send(results);
+    console.log(results);
   });
 });
 
@@ -68,7 +69,7 @@ app.get("/get/:patientId", (req, res) => {
 
 app.delete("/delete/:patientId", (req, res) => {
   const patientId = req.params.patientId;
-  const DeleteQuery = "DELETE FROM patients WHERE patient_id = ?";
+  const DeleteQuery = "DELETE FROM patients WHERE id = ?";
   db.query(DeleteQuery, patientId, (err, result) => {
     if (err) console.log(err);
   });
