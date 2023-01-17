@@ -40,6 +40,17 @@ app.get("/get/:patientId", (req, res) => {
   });
 });
 
+
+app.get("/get/patient_encounter/:patientId", (req, res) => {
+  const patientId = req.params.patientId;
+  const SelectQuery = "SELECT * FROM patient_encounters where patient_id = ?";
+  db.query(SelectQuery, patientId, (err, results) => {
+    res.send(results);
+    console.log(results);
+  });
+
+});
+
 // app.post("/insert", (req, res) => {
 //   const patientName = req.body.setPatientName;
 //   const patientDOB = req.body.setPatientDOB;
