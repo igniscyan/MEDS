@@ -2,8 +2,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `password_digest` varchar(50) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   
   PRIMARY KEY (`id`)
 ); 
@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `patients` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL, 
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `last_name` varchar(255) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `dob` date NOT NULL, 
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS `patients` (
 CREATE TABLE IF NOT EXISTS `patient_encounters` (
   `id` int NOT NULL AUTO_INCREMENT,
   `patient_id` int NOT NULL, 
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `gyn` boolean, 
   `pregnant` boolean, 
   `last_menstrual_period` date,
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS `patient_encounters` (
 
 CREATE TABLE IF NOT EXISTS `drug_categories` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL, 
-  `updated_at` datetime NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `category` varchar(255) NOT NULL,
   PRIMARY KEY(`id`)
 );
@@ -61,8 +61,8 @@ CREATE TABLE IF NOT EXISTS `drug_categories` (
 
 CREATE TABLE IF NOT EXISTS `drugs` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `drug_name` varchar(255) NOT NULL, 
   `drug_route` varchar(255) NOT NULL, 
   `drug_dosage` varchar(255) NOT NULL, 
@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS `drugs` (
 
 CREATE TABLE IF NOT EXISTS `prescriptions` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `patient_encounter_id` int NOT NULL,
   `med_instructions` text,
   `pharm_instructions` text, 
@@ -126,8 +126,8 @@ CREATE TABLE IF NOT EXISTS `allergies_patients` (
 
 CREATE TABLE IF NOT EXISTS `diagnoses` ( 
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL, 
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `diagnosis` text NOT NULL,
   
   PRIMARY KEY (`id`) 
@@ -135,8 +135,8 @@ CREATE TABLE IF NOT EXISTS `diagnoses` (
 
 CREATE TABLE IF NOT EXISTS `pm_hxes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL, 
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `diagnosis` text NOT NULL,
   
   PRIMARY KEY (`id`)
@@ -144,8 +144,8 @@ CREATE TABLE IF NOT EXISTS `pm_hxes` (
 
 CREATE TABLE IF NOT EXISTS `fam_hxes` ( 
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL, 
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `diagnosis` text NOT NULL,
  
   PRIMARY KEY (`id`)

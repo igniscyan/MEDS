@@ -20,14 +20,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/get/", (req, res) => {
-  const SelectQuery = " SELECT * FROM patients";
+  const SelectQuery = " SELECT *, DATE_FORMAT(dob, \"%Y-%m-%d\") as dob FROM patients";
   db.query(SelectQuery, (err, results) => {
-    res.send(
-      results.map((result) => ({
-        ...result,
-        dob: result.dob.toString().split(" ").slice(1, 4).join(" "),
-      }))
-    );
+    console.log(results);
+    res.send(results);
   });
 });
 
@@ -41,7 +37,7 @@ app.get("/get/:patientId", (req, res) => {
 });
 
 
-app.get("/get/patient_encounter/:patientId", (req, res) => {
+app.get("/get/patient_encounters/:patientId", (req, res) => {
   const patientId = req.params.patientId;
   const SelectQuery = "SELECT * FROM patient_encounters where patient_id = ?";
   db.query(SelectQuery, patientId, (err, results) => {
@@ -49,6 +45,16 @@ app.get("/get/patient_encounter/:patientId", (req, res) => {
     console.log(results);
   });
 
+});
+
+app.get("/get/patient_encounter/:encounterId", (req, res) => {
+  const encounterId = req.params.encounterId;
+  const SelectQuery = "SELECT * FROM patient_encounters WHERE id = ?"
+
+  db.query(SelectQuery, encounterId, (err, results)=> {
+    res.send(results);
+    console.log(results);
+  })
 });
 
 // app.post("/insert", (req, res) => {
@@ -86,16 +92,35 @@ app.delete("/delete/:patientId", (req, res) => {
   });
 });
 
-app.put("/update/:patientId/:", (req, res) => {
-  const patientUpdate = req.body.patientUpdate;
-  const patientId = req.params.patientId;
+app.put("/update/patient/:patientId/", ({body, params}, res) => {
+  const newPatientInfo = Object.values(body).filter(item => item !== "");
+  const {patientId} = params;
+  const getPatientList = "SELECT * FROM patients";
+
+  console.log("newPatientInfo: ", newPatientInfo);
+  console.log("patientId: ", patientId);
+    
+  const postPatientUpdateQuery = 
+    'UPDATE patients SET first_name = ?, last_name = ?, dob = ?, gender = ?, smoker = ? WHERE id = ?';
+
+  db.query(postPatientUpdateQuery, [...newPatientInfo, patientId], (err, result) => {
+    if (err) console.log(err);
+    else{
+      db.query(getPatientList, (err, results) => {
+        if(err) console.log(err);
+        else res.send(results);
+      })
+    }
+  })
+    
   console.log("fudge knocka!");
 });
 
 app.post("/insert/patient/", (req, res) => {
+  console.log(req.body)
   const valuesArray = Object.values(req.body);
   const insertNewPatientQuery =
-    "INSERT INTO patients (last_name, first_name, dob, gender, smoker) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO patients (first_name, last_name, dob, gender, smoker) VALUES (?, ?, ?, ?, ?)";
   const getPatientList = "SELECT * FROM patients";
 
   db.query(insertNewPatientQuery, valuesArray, (err, result) => {
@@ -113,14 +138,16 @@ app.post("/insert/patient/", (req, res) => {
 
 app.post("/insert/patient_encounter/:patientId", (req, res) => {
   const insertPatientEncounterQuery =
-    "INSERT INTO patient_encounters (patient_id, gyn, pregnant, last_menstrual_period, height, patient_weight, temp, systolic, diastolic, heart_rate, resp_rate, triage_note, med_note, pharm_note, eye_note, dental_note, goodies_note, location, open) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    "INSERT INTO patient_encounters (patient_id, chief_complaint, gyn, pregnant, last_menstrual_period, height, patient_weight, temp, systolic, diastolic, heart_rate, resp_rate, triage_note, med_note, pharm_note, eye_note, dental_note, goodies_note, location, open) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   const getPatientEncountersQuery = "SELECT * FROM patient_encounters";
   const patientId = req.params.patientId;
-  const valuesArray = Object.values(req.body); //array of values from request
+
+  // Array of non-empty values from request:
+  const valuesArray = Object.values(req.body).filter(value => value !== ""); 
   valuesArray.unshift(patientId);
 
-  db.query(insertPatientEncounterQuery, valuesArray, (err, result) => {
+  db.query(insertPatientEncounterQuery, [patientId, ...valuesArray], (err, result) => {
     if (err) console.log(err);
     else {
       db.query(getPatientEncountersQuery, (err, results) => {
@@ -130,6 +157,26 @@ app.post("/insert/patient_encounter/:patientId", (req, res) => {
     }
   });
 });
+
+app.put("update/patient_encounter/:encounterid") , (req, res) => {
+  const updatePatientEncounterQuery = "UPDATE patient_encounters SET chief_complaint = ?, gyn = ?, pregnant = ?, last_menstrual_period = ?, height = ?, patient_weight = ?, temp = ?, systolic = ?, diastolic = ?, heart_rate = ?, resp_rate = ?, triage_note = ?, med_note = ?, eye_note = ?, dental_note = ?, location = ?, open = ? WHERE id=?"
+  
+  const getPatientEncountersQuery = "SELECT * FROM patient_encounters";
+  const patientId = req.params.patientId;
+  const valuesArray = Object.values(req.body); 
+  valuesArray.unshift(patientId); 
+
+  db.query(updatePatientEncounterQuery, valuesArray, (err, results) => {
+    if (err) console.log(err);
+
+    else {
+      db.query(getPatientEncountersQuery, (err, results) => {
+        if (err) console.log(err);
+        else res.send(results);
+      })
+    }
+  })
+}
 
 console.log("TESTING TESTING");
 app.listen("3001", () => {});
