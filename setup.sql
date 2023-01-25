@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `patient_encounters` (
   `patient_id` int NOT NULL, 
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `chief_complaint` int NOT NULL,
   `gyn` boolean, 
   `pregnant` boolean, 
   `last_menstrual_period` date,
@@ -93,16 +94,6 @@ CREATE TABLE IF NOT EXISTS `chief_complaints`(
   `id` int NOT NULL AUTO_INCREMENT,
   `complaint` text NOT NULL,
   PRIMARY KEY(`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `chief_complaints_patient_encounters` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `patient_encounter_id` int NOT NULL,
-  `chief_complaint_id` int NOT NULL, 
-  PRIMARY KEY (`id`),
-  
-  FOREIGN KEY (`patient_encounter_id`) REFERENCES patient_encounters(`id`),
-  FOREIGN KEY (`chief_complaint_id`) REFERENCES chief_complaints(`id`)
 );
 
 
