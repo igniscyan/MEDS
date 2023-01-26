@@ -36,6 +36,15 @@ app.get("/get/:patientId", (req, res) => {
   });
 });
 
+app.get("/get/patient_name/:patientId", (req, res) => {
+  const patientId = req.params.patientId;
+  const selectQuery = "SELECT first_name, last_name FROM patients WHERE id = ?";
+  db.query(selectQuery, patientId, (err, results) => {
+    res.send(results);
+    console.log(results);
+  });
+});
+
 
 app.get("/get/patient_encounters/:patientId", (req, res) => {
   const patientId = req.params.patientId;
