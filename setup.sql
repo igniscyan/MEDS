@@ -3,50 +3,47 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(50) NOT NULL,
   `password_digest` varchar(50) NOT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-  
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-); 
-
+);
 
 CREATE TABLE IF NOT EXISTS `patients` (
   `id` int NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `last_name` varchar(255) NOT NULL,
   `first_name` varchar(255) NOT NULL,
-  `dob` date NOT NULL, 
-  `gender` varchar(255) NOT NULL, 
+  `dob` date NOT NULL,
+  `gender` varchar(255) NOT NULL,
   `smoker` boolean NOT NULL,
-  
-  PRIMARY KEY (id)
+  `queue` int NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `patient_encounters` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `patient_id` int NOT NULL, 
+  `patient_id` int NOT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `chief_complaint` int NOT NULL,
-  `gyn` boolean, 
-  `pregnant` boolean, 
+  `gyn` boolean,
+  `pregnant` boolean,
   `last_menstrual_period` date,
-  `height` decimal(2,1),
+  `height` decimal(2, 1),
   `patient_weight` int,
-  `temp` float, 
+  `temp` float,
   `systolic` int,
-  `diastolic` int, 
-  `heart_rate` int, 
+  `diastolic` int,
+  `heart_rate` int,
   `resp_rate` int,
   `triage_note` text,
-  `med_note` text, 
+  `med_note` text,
   `pharm_note` text,
-  `eye_note` text, 
-  `dental_note` text, 
+  `eye_note` text,
+  `dental_note` text,
   `goodies_note` text,
-  `location` text,
   `open` boolean,
-
+  `location` text,
   FOREIGN KEY (`patient_id`) REFERENCES patients(`id`),
   PRIMARY KEY (`id`)
 );
@@ -54,38 +51,34 @@ CREATE TABLE IF NOT EXISTS `patient_encounters` (
 CREATE TABLE IF NOT EXISTS `drug_categories` (
   `id` int NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `category` varchar(255) NOT NULL,
   PRIMARY KEY(`id`)
 );
 
-
 CREATE TABLE IF NOT EXISTS `drugs` (
   `id` int NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-  `drug_name` varchar(255) NOT NULL, 
-  `drug_route` varchar(255) NOT NULL, 
-  `drug_dosage` varchar(255) NOT NULL, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `drug_name` varchar(255) NOT NULL,
+  `drug_route` varchar(255) NOT NULL,
+  `drug_dosage` varchar(255),
   `drug_category_id` int NOT NULL,
-  `inventory_start` int NOT NULL,
-  
+  `inventory_qty` int,
   FOREIGN KEY(`drug_category_id`) REFERENCES drug_categories(`id`),
   PRIMARY KEY (`id`)
 );
 
-
 CREATE TABLE IF NOT EXISTS `prescriptions` (
   `id` int NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `patient_encounter_id` int NOT NULL,
   `med_instructions` text,
-  `pharm_instructions` text, 
+  `pharm_instructions` text,
   `diagnosis_id` int NOT NULL,
-  `med_prescription_id` bigint NOT NULL, 
+  `med_prescription_id` bigint NOT NULL,
   `pharm_prescription_id` bigint NOT NULL,
-  
   FOREIGN KEY (`patient_encounter_id`) REFERENCES patient_encounters(`id`),
   PRIMARY KEY(`id`)
 );
@@ -96,49 +89,44 @@ CREATE TABLE IF NOT EXISTS `chief_complaints`(
   PRIMARY KEY(`id`)
 );
 
-
 CREATE TABLE IF NOT EXISTS `allergies` (
   `id` int NOT NULL AUTO_INCREMENT,
   `allergen` text NOT NULL,
-  `created_at` datetime NOT NULL, 
+  `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `allergies_patients` (
-  `id` int NOT NULL AUTO_INCREMENT, 
-  `patient_id` int NOT NULL, 
+  `id` int NOT NULL AUTO_INCREMENT,
+  `patient_id` int NOT NULL,
   `allergy_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  
   FOREIGN KEY (`patient_id`) REFERENCES patients(`id`),
   FOREIGN KEY (`allergy_id`) REFERENCES allergies(`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `diagnoses` ( 
+CREATE TABLE IF NOT EXISTS `diagnoses` (
   `id` int NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `diagnosis` text NOT NULL,
-  
-  PRIMARY KEY (`id`) 
+  PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `pm_hxes` (
   `id` int NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `diagnosis` text NOT NULL,
-  
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `fam_hxes` ( 
+CREATE TABLE IF NOT EXISTS `fam_hxes` (
   `id` int NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `diagnosis` text NOT NULL,
- 
   PRIMARY KEY (`id`)
 );
 
@@ -146,20 +134,220 @@ CREATE TABLE IF NOT EXISTS `fam_hxes_patients` (
   `id` int NOT NULL AUTO_INCREMENT,
   `patient_id` int NOT NULL,
   `fam_hxe_id` int NOT NULL,
-  
   PRIMARY KEY (`id`),
   FOREIGN KEY (`patient_id`) REFERENCES patients(`id`),
   FOREIGN KEY (`fam_hxe_id`) REFERENCES fam_hxes(`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `patient_pm_hexes` ( 
+CREATE TABLE IF NOT EXISTS `patient_pm_hexes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `patient_id` int NOT NULL, 
+  `patient_id` int NOT NULL,
   `pm_hx_id` int NOT NULL,
-  
   PRIMARY KEY (`id`),
   FOREIGN KEY (`patient_id`) REFERENCES patients(`id`),
   FOREIGN KEY (`pm_hx_id`) REFERENCES pm_hxes(`id`)
 );
 
+CREATE TABLE IF NOT EXISTS `drug_assignment_insert` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `drug_id` int NOT NULL,
+  `patient_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`drug_id`) REFERENCES drugs(`id`),
+  FOREIGN KEY (`patient_id`) REFERENCES patients(`id`)
+);
 
+INSERT INTO
+  drug_categories (category)
+VALUES
+  ('ALLERGY'),
+  ('ANTIBIOTICS (ORAL)'),
+  ('ANTIBIOTICS (TOPICAL)'),
+  ('ANTIEMETICS'),
+  ('ANTIFUNGALS (TOPICAL)'),
+  ('ANTIFUNGALS (VAGINAL)'),
+  ('ANTIPARASITE'),
+  ('ANTISCABIES'),
+  ('ANTIVIRALS'),
+  ('ASTHMA/COPD'),
+  ('CARDIOVASCULAR'),
+  ('COUGH/COLD'),
+  ('COVID'),
+  ('ENDOCRINE'),
+  ('EYE'),
+  ('GI'),
+  ('PAIN'),
+  ('STEROID'),
+  ('TOPICAL'),
+  ('VITAMINS');
+
+INSERT INTO
+  drugs (
+    drug_category_id,
+    drug_name,
+    drug_route,
+    drug_dosage,
+    inventory_qty
+  )
+VALUES
+  (1, 'CETIRIZINE HCL', '', '10MG', 6000),
+  (1, 'LORATADINE', '', '10MG', 3600),
+  (
+    1,
+    'LORATADINE: 120 ML BOTTLE',
+    '',
+    '5MG/5ML',
+    50
+  ),
+  (
+    1,
+    'FLUTICASONE PROPIONATE NASAL SPRAY',
+    '',
+    '50MCG/16G',
+    30
+  ),
+  (18, 'PREDNISONE', '', '5MG', 200),
+  (18, 'PREDNISONE', '', '10MG', 200),
+  (18, 'PREDNISONE', '', '20MG', 500),
+  (17, 'ACETAMINOPHEN', '', '325MG', 8000),
+  (17, 'ACETAMINOPHEN', '', '500MG', 5000),
+  (17, 'IBUPROFEN', '', '200MG', 7000),
+  (17, 'IBUPROFEN', '', '600MG', 2000),
+  (
+    17,
+    'IBUPROFEN: 118 ML BOTTLE',
+    '',
+    '100MG/5ML',
+    40
+  ),
+  (17, 'MELOXICAM ', '', '7.5MG', 200),
+  (17, 'NAPROXEN', '', '500MG', 1500),
+  (17, 'CYCLOBENZAPRINE', '', '10MG', 200),
+  (2, 'AMOXCILLIN', '', '500MG', 1000),
+  (2, 'AMOXCILLIN', '', '500MG', 0),
+  (
+    2,
+    'AMOXICILLIN: 50 ML BOTTLE',
+    '',
+    '400MG/5ML',
+    14
+  ),
+  (2, 'AMOXICILLIN', '', '875MG', 200),
+  (
+    2,
+    'AMOXICILLIN: 100ML BOTTLE',
+    '',
+    '250MG/5ML',
+    70
+  ),
+  (2, 'AZITHROMYCIN', '', '250MG', 216),
+  (
+    2,
+    'AZITHROMYCIN: 15 ML BOTTLE',
+    '',
+    '200MG/5ML',
+    14
+  ),
+  (2, 'CEPHALEXIN', '', '500MG', 1000),
+  (
+    2,
+    'CEPHALEXIN: 100 ML BOTTLE',
+    '',
+    '250MG/5ML',
+    20
+  ),
+  (2, 'CIPROFLOXACIN', '', '500MG', 1000),
+  (2, 'CLARITHROMYCIN ', '', '500MG', 120),
+  (2, 'DOXYCYCLINE', '', '100MG', 1000),
+  (2, 'METRONIDAZOLE', '', '250MG', 500),
+  (2, 'METRONIDAZOLE', '', '500MG', 1000),
+  (2, 'NITROFURANTOIN', '', '100MG', 1000),
+  (2, 'SMZ/TMP DS', '', '800MG/160MG', 1000),
+  (3, 'BACTROBAN 22 G TUBE*', '', '2%', 50),
+  (
+    3,
+    'GENTAMICIN EYE DROPS: 5 ML BOTTLE',
+    '',
+    '0.30%',
+    30
+  ),
+  (
+    3,
+    'OFLOXACIN EYE DROPS: 5ML BOTTLE',
+    '',
+    '0.30%',
+    30
+  ),
+  (7, 'FLUCONAZOLE', '', '150MG', 200),
+  (7, 'FLUCONAZOLE', '', '100MG', 300),
+  (7, 'TERBINAFINE', '', '250MG', 300),
+  (
+    8,
+    'CLOTRIMAZOLE TOPICAL: 20 G TUBE',
+    '',
+    '1%',
+    48
+  ),
+  (
+    9,
+    'CLOTRIMAZOLE VAGINAL: 45 G INSERT',
+    '',
+    '45G',
+    30
+  ),
+  (10, 'ALBENDAZOLE', '', '400MG', 1500),
+  (10, 'IVERMECTIN', '', '6MG', 500),
+  (11, 'PERMETHRIN CREAM: 60 TUBE', '', '5%', 10),
+  (12, 'ACYCLOVIR', '', '200MG', 500),
+  (5, 'ONDANSETRON', '', '4MG', 210),
+  (14, 'AMLODIPINE', '', '5MG', 2000),
+  (14, 'AMLODIPINE', '', '10MG', 3000),
+  (14, 'ASPIRIN', '', '81MG', 2000),
+  (14, 'ATENOLOL', '', '50MG', 2000),
+  (14, 'ENALAPRIL', '', '10MG', 400),
+  (14, 'FUROSEMIDE', '', '40MG', 2000),
+  (14, 'FUROSEMIDE', '', '20MG', 2000),
+  (14, 'HYDROCHLOROTHIAZIDE', '', '25MG', 2000),
+  (14, 'HYDROCHLOROTHIAZIDE', '', '12.5MG', 2000),
+  (14, 'LISINOPRIL', '', '20MG', 2000),
+  (14, 'LISINOPRIL', '', '10MG', 2000),
+  (14, 'METOPROLOL SUCCINATE', '', '25MG', 2000),
+  (14, 'METOPROLOL SUCCINATE', '', '50MG', 2000),
+  (15, 'GLIPIZIDE', '', '5MG', 1000),
+  (15, 'METFORMIN', '', '1000MG', 1000),
+  (15, 'METFORMIN', '', '500MG', 8000),
+  (15, 'METFORMIN', '', '', 0),
+  (16, 'HYDROCORTISONE CREAM: 1 OZ TUBE', '', '1%', 50),
+  (
+    16,
+    'TRIAMCINOLONE CREAM: 30 G TUBE',
+    '',
+    '0.10%',
+    45
+  ),
+  (16, 'SODIUM FLUORIDE VARNISH', '', '5%', 2000),
+  (
+    17,
+    'ARTIFICIAL TEARS*: 15 ML BOTLLE',
+    '',
+    '',
+    60
+  ),
+  (18, 'BISMUTH', '', '262MG', 210),
+  (18, 'CALCIUM CARBONATE', '', '500MH', 3000),
+  (18, 'DOCUSATE', '', '100MG', 500),
+  (18, 'FAMOTIDINE', '', '20MG', 2000),
+  (18, 'LOPERAMIDE', '', '2MG', 500),
+  (18, 'OMEPRAZOLE', '', '20MG', 3000),
+  (18, 'PHENYLEPHRINE', '', '', 36),
+  (18, 'SENNA', '', '8.6MG', 200),
+  (18, 'SIMETHICONE ', '', '125MG', 300),
+  (19, 'ADULT''S MVI W/O IRON', '', '', 70000),
+  (19, 'CALCIUM W/ VIT D', '', '600MG/5MCG', 120),
+  (19, 'CHILDREN''S MVI W/O IRON', '', '', 21000),
+  (19, 'PRENATALS*', '', '', 1000),
+  (19, 'ADULT''S VITAMIN C', '', '500MG', 200),
+  (13, 'DEXAMETHASONE', '', '4MG', 2000);

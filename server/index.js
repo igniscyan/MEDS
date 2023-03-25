@@ -36,6 +36,35 @@ app.get("/get/:patientId", (req, res) => {
   });
 });
 
+app.get("/get/drugs/", (req, res) => {
+  console.log("wtf");
+  const drugSelectQuery = "SELECT * FROM drugs";
+  const categorySelectQuery = "SELECT * from drug_categories";
+
+  try {
+    const categoriesResult =  db.query(categorySelectQuery);
+    const drugsResult =  db.query(drugSelectQuery);
+    console.log('Categories:', categoriesResult);
+    console.log('Drugs:', drugsResult);
+
+    const formattedDrugs = categoriesResult.map((category) => {
+      const filteredDrugs = drugsResult.filter((drug) => drug.category_id === category.id);
+      console.log(`Category "${category.name}" (${category.id}) has ${filteredDrugs.length} drugs`);
+
+      return {
+        label: category.name,
+        options: filteredDrugs.map((drug) => ({ label: drug.name, value: drug.id })),
+      };
+    });
+
+    console.log('Formatted Drugs:', formattedDrugs);
+    res.json(formattedDrugs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal server error");
+  }
+});
+
 app.get("/get/patient_name/:patientId", (req, res) => {
   const patientId = req.params.patientId;
   const selectQuery = "SELECT first_name, last_name FROM patients WHERE id = ?";
@@ -60,6 +89,15 @@ app.get("/get/patient_encounter/:encounterId", (req, res) => {
   const SelectQuery = "SELECT * FROM patient_encounters WHERE id = ?"
 
   db.query(SelectQuery, encounterId, (err, results)=> {
+    res.send(results);
+    console.log(results);
+  })
+});
+
+app.get("/get/queues", (req, res) => {
+  const SelectQuery = "SELECT * FROM queues"
+
+  db.query(SelectQuery, (err, results)=> {
     res.send(results);
     console.log(results);
   })
@@ -108,10 +146,13 @@ app.put("/update/patient/:patientId/", ({body, params}, res) => {
   console.log("newPatientInfo: ", newPatientInfo);
   console.log("patientId: ", patientId);
     
-  const postPatientUpdateQuery = 
-    'UPDATE patients SET first_name = ?, last_name = ?, dob = ?, gender = ?, smoker = ? WHERE id = ?';
+  // FIXME: This doesn't seem to be saving age...
+  // Might just need to reload the server, but idk 
+  // Not sure if Hot Module Reload works on backend changes
+  const putPatientUpdateQuery = 
+    'UPDATE patients SET first_name = ?, last_name = ?, dob = ?, age = ?, gender = ?, smoker = ? WHERE id = ?';
 
-  db.query(postPatientUpdateQuery, [...newPatientInfo, patientId], (err, result) => {
+  db.query(putPatientUpdateQuery, [...newPatientInfo, patientId], (err, result) => {
     if (err) console.log(err);
     else{
       db.query(getPatientList, (err, results) => {
@@ -124,11 +165,31 @@ app.put("/update/patient/:patientId/", ({body, params}, res) => {
   console.log("fudge knocka!");
 });
 
+//TODO: implement and test 
+app.put("/update/patient_queue/:patientId/", ({body, params}, res) => {
+  //get patient id and new queue status from params
+  const {patientId} = params;
+  const {queueStatus} = body;
+
+  const updatePatientQueueQuery = "UPDATE patients SET queue = ? WHERE id = ?";
+  db.query(updatePatientQuery, [queueStatus, patientId], (err, result) => {
+    if (err) console.log(err);
+    else {
+      db.query(getPatientList, (err, results) => {
+        if(err) console.log(err);
+        else res.send(results);
+      })
+    }
+  })
+});
+
+
+
 app.post("/insert/patient/", (req, res) => {
   console.log(req.body)
   const valuesArray = Object.values(req.body);
   const insertNewPatientQuery =
-    "INSERT INTO patients (first_name, last_name, dob, gender, smoker) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO patients (first_name, last_name, age, dob, gender, smoker) VALUES (?, ?, ?, ?, ?, ?)";
   const getPatientList = "SELECT * FROM patients";
 
   db.query(insertNewPatientQuery, valuesArray, (err, result) => {
