@@ -1,18 +1,7 @@
 
-Notes about what's left to do: 
 
-having the queue be on the same page as the patient view is confusing and unnecessary. 
-
-We're going to need to restore the old patients component, and then just have a separate queue page.
-
-
-
--Implement the new queue page
--Restore old patient page 
--Fix react-select for groups
--Implement trigger query for drug assignment.
-
-
-
-
-
+- Fix patient saving
+    -stretch goal: Make age toggle more consistent
+-Implement prescription select on encounter page
+    -Site or location of the clinic on Encounter Page
+    -Stretch: Add constraints

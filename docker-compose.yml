@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 x-common-variables: &common-variables
   MYSQL_DATABASE: meds
@@ -13,6 +13,7 @@ services:
       - SYS_NICE
     volumes:
       - "./setup.sql:/docker-entrypoint-initdb.d/setup.sql"
+      - "./mysql-data:/var/lib/mysql" # Add this line for persistent data storage
     ports:
       - "9906:3306"
     environment:
@@ -58,11 +59,11 @@ services:
       - ./client:/app
 
   adminer:
-      image: adminer:latest
-      restart: unless-stopped
-      ports:
-        - 8000:8080
-      depends_on:
-        - mysql_db
-      environment:
-        ADMINER_DEFAULT_SERVER: mysql_db
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - 8000:8080
+    depends_on:
+      - mysql_db
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql_db
